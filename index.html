@@ -1,0 +1,1508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Block Schedule</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='7' width='28' height='18' rx='3' fill='%23F6C61A'/%3E%3Ccircle cx='7' cy='16' r='2' fill='%23fff'/%3E%3Ctext x='19' y='22' font-family='Arial' font-weight='700' font-size='15' text-anchor='middle' fill='%231B2230'%3E%23%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style id="page-size">@page { size: letter landscape; margin: 0; }</style>
+<style>
+:root {
+  --paper: #F1F3F2;
+  --sheet: #FFFFFF;
+  --ink: #1B2230;
+  --ink-2: #536071;
+  --ink-3: #848E9B;
+  --rule: #D2D8DE;
+  --rule-2: #E5E9ED;
+  --blue: #24569B;
+  --blue-ink: #173E73;
+  --blue-soft: #E6EEF8;
+  --tag: #F6C61A;
+  --tag-edge: #D9A800;
+  --tag-soft: #FDF2C2;
+  --red: #B3261E;
+  --red-soft: #FBE8E6;
+  --off: #ECEFF2;
+  --hatch: repeating-linear-gradient(135deg, rgba(83,96,113,.20) 0 1.2px, transparent 1.2px 6px);
+  --f-body: "Barlow", "Bahnschrift", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-cond: "Barlow Condensed", "Bahnschrift SemiCondensed", "Bahnschrift", "Avenir Next Condensed", "Arial Narrow", "DejaVu Sans Condensed", sans-serif;
+  --radius: 6px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 15px/1.45 var(--f-body);
+  font-variant-numeric: tabular-nums;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 10px 20px; background: var(--sheet); border-bottom: 1px solid var(--rule);
+  position: sticky; top: 0; z-index: 30;
+}
+.brand { display: flex; align-items: center; gap: 9px; font: 700 21px/1 var(--f-cond); letter-spacing: .01em; white-space: nowrap; }
+.brand .tag { font-size: 15px; }
+.sched-pick { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.sched-pick select { max-width: 280px; font-weight: 600; }
+.topbar .spacer { flex: 1; }
+.menu { position: relative; }
+.menu > summary { list-style: none; }
+.menu > summary::-webkit-details-marker { display: none; }
+.menu-list {
+  position: absolute; right: 0; top: calc(100% + 6px); min-width: 210px; z-index: 40;
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgba(27,34,48,.14); padding: 6px; display: grid;
+}
+.menu.left .menu-list { left: 0; right: auto; }
+.menu-list button { text-align: left; background: none; border: 0; padding: 8px 10px; border-radius: 4px; cursor: pointer; }
+.menu-list button:hover { background: var(--blue-soft); }
+.menu-list button.danger { color: var(--red); }
+.menu-list hr { border: 0; border-top: 1px solid var(--rule-2); margin: 4px 2px; width: 100%; }
+
+.tabs { display: flex; gap: 2px; padding: 0 20px; background: var(--sheet); border-bottom: 1px solid var(--rule); overflow-x: auto; }
+.tabs button {
+  background: none; border: 0; padding: 11px 14px 9px; cursor: pointer; white-space: nowrap;
+  font: 600 16px/1 var(--f-cond); color: var(--ink-2); border-bottom: 3px solid transparent; letter-spacing: .01em;
+}
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--tag); }
+.tabs .count { display: inline-block; margin-left: 5px; padding: 1px 6px; border-radius: 9px; background: var(--red); color: #fff; font-size: 12px; }
+
+main { padding: 22px 20px 60px; max-width: 1560px; margin: 0 auto; }
+.banner { padding: 10px 14px; border-radius: var(--radius); margin: 0 0 14px; border: 1px solid; }
+.banner.warn { background: var(--red-soft); border-color: #EBC0BB; color: #6E1A14; }
+.banner.info { background: var(--blue-soft); border-color: #C6D6EC; color: var(--blue-ink); }
+
+/* ---------- common controls ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 7px 13px; border-radius: var(--radius); border: 1px solid var(--rule);
+  background: var(--sheet); cursor: pointer; font-weight: 500; white-space: nowrap; line-height: 1.2;
+}
+.btn:hover { border-color: var(--ink-3); }
+.btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+.btn.primary:hover { background: var(--blue-ink); }
+.btn.quiet { border-color: transparent; background: transparent; color: var(--blue); }
+.btn.quiet:hover { background: var(--blue-soft); }
+.btn.danger { color: var(--red); }
+.btn.icon { padding: 6px 9px; }
+.btn[disabled] { opacity: .45; cursor: default; }
+input[type=text], input[type=number], input[type=date], select, textarea {
+  border: 1px solid var(--rule); border-radius: 5px; background: #fff; padding: 6px 8px; min-height: 34px;
+}
+input[type=number] { width: 70px; }
+input:hover, select:hover { border-color: var(--ink-3); }
+label.check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.muted { color: var(--ink-2); }
+.small { font-size: 13px; }
+
+/* ---------- view head ---------- */
+.view-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.view-head h1 { font: 700 30px/1.05 var(--f-cond); margin: 0 0 4px; letter-spacing: .005em; }
+.view-head p { margin: 0; color: var(--ink-2); max-width: 75ch; }
+.toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; }
+.empty { padding: 40px 24px; text-align: center; color: var(--ink-2); }
+.empty h2 { font: 700 22px var(--f-cond); color: var(--ink); margin: 0 0 6px; }
+
+/* ---------- block tag (the one loud element) ---------- */
+.tag {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.5em; height: 1.22em; padding: 0 .22em 0 .42em;
+  border-radius: .16em; background: var(--tag); color: var(--ink);
+  font: 700 1em/1 var(--f-cond); letter-spacing: -.01em; position: relative;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.tag::before { /* the hole of a hang tag */
+  content: ""; position: absolute; left: .13em; top: 50%; width: .15em; height: .15em; margin-top: -.075em;
+  border-radius: 50%; background: rgba(255,255,255,.95); box-shadow: inset 0 0 0 .03em rgba(0,0,0,.18);
+}
+.tag.cont { background: transparent; box-shadow: inset 0 0 0 .07em var(--tag-edge); color: var(--ink-2); font-weight: 600; }
+.tag.cont::before { background: var(--tag-edge); box-shadow: none; opacity: .5; }
+.tag.flat { padding: 0 .3em; }
+.tag.flat::before { display: none; }
+
+/* ---------- master schedule table ---------- */
+.table-wrap { overflow: auto; max-height: calc(100vh - 230px); border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); }
+table.master { border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+table.master th, table.master td { border-right: 1px solid var(--rule-2); border-bottom: 1px solid var(--rule-2); }
+table.master thead th {
+  position: sticky; top: 0; z-index: 2; background: #F7F8F9; vertical-align: bottom; text-align: left;
+  font: 600 14px/1.15 var(--f-cond); padding: 9px 8px 7px; min-width: 106px; max-width: 128px; border-bottom: 1px solid var(--rule);
+}
+table.master thead th .meta { display: block; font: 500 11.5px/1.2 var(--f-body); color: var(--ink-3); margin-top: 3px; }
+table.master th.blk, table.master td.blk { position: sticky; left: 0; z-index: 1; background: #F7F8F9; border-right: 1px solid var(--rule); }
+table.master thead th.blk { z-index: 3; min-width: 74px; }
+td.blk { padding: 5px 8px; white-space: nowrap; }
+td.blk .tag { font-size: 17px; }
+td.blk .lbl { display: block; font-size: 11.5px; color: var(--ink-2); max-width: 140px; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+td.c { padding: 0; }
+button.cell {
+  display: block; width: 100%; min-height: 44px; border: 0; background: transparent; text-align: left;
+  padding: 5px 8px; cursor: pointer; line-height: 1.2; position: relative;
+}
+button.cell:hover { background: var(--blue-soft); }
+button.cell .s { display: block; font-weight: 600; white-space: nowrap; }
+button.cell .e { display: block; color: var(--ink-2); font-size: 12.5px; white-space: nowrap; }
+button.cell.now { box-shadow: inset 3px 0 0 var(--blue); background: #F2F6FC; }
+button.cell.shifted::after {
+  content: attr(data-shift); position: absolute; right: 4px; top: 4px; font: 600 10.5px/1 var(--f-body);
+  color: var(--blue-ink); background: var(--blue-soft); border-radius: 3px; padding: 2px 3px;
+}
+button.cell.bad { background: var(--red-soft); box-shadow: inset 0 0 0 1.5px var(--red); }
+button.cell.bad .s { color: var(--red); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin-top: 10px; }
+.legend i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+.legend .l-now { background: #F2F6FC; box-shadow: inset 3px 0 0 var(--blue); }
+.legend .l-shift { background: var(--blue-soft); }
+.legend .l-bad { background: var(--red-soft); box-shadow: inset 0 0 0 1.5px var(--red); }
+
+/* ---------- popover ---------- */
+#popover { position: absolute; z-index: 50; display: none; width: 390px; max-width: calc(100vw - 24px);
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 14px 36px rgba(27,34,48,.18); padding: 14px; }
+#popover.open { display: block; }
+.pop-title { font: 700 20px/1.1 var(--f-cond); margin: 0 0 2px; display: flex; align-items: center; gap: 8px; }
+.pop-title .tag { font-size: 18px; }
+.pop-dates { color: var(--ink-2); margin: 0 0 10px; }
+.why { list-style: none; margin: 0 0 12px; padding: 0; border-top: 1px solid var(--rule-2); }
+.why li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--rule-2); font-size: 13.5px; }
+.why li.wins { font-weight: 600; }
+.why li .d { white-space: nowrap; }
+.issues { color: var(--red); font-size: 13.5px; margin: 0 0 10px; padding-left: 18px; }
+.shift-form { display: grid; gap: 8px; }
+.shift-form .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pop-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; flex-wrap: wrap; }
+
+/* ---------- calendars view ---------- */
+.cal-layout { display: grid; grid-template-columns: 230px 1fr; gap: 18px; align-items: start; }
+.trade-list { display: grid; gap: 2px; padding: 6px; position: sticky; top: 110px; max-height: calc(100vh - 130px); overflow: auto; }
+.trade-list button {
+  text-align: left; border: 0; background: none; padding: 6px 10px; border-radius: 5px; cursor: pointer;
+  font: 600 15.5px/1.2 var(--f-cond); color: var(--ink-2); display: grid; gap: 1px;
+}
+.trade-list button:hover { background: var(--off); color: var(--ink); }
+.trade-list button[aria-current="true"] { background: var(--ink); color: #fff; }
+.trade-list button .rng { font: 500 12px/1.4 var(--f-body); opacity: .75; white-space: nowrap; }
+.month-nav { display: flex; align-items: center; gap: 6px; }
+.month-nav select { font-weight: 600; min-width: 170px; }
+.sheet-frame { position: relative; width: 100%; max-width: calc((100vh - 250px) * 11 / 8.5); min-width: min(100%, 640px); overflow: hidden; border-radius: 4px; box-shadow: 0 1px 2px rgba(27,34,48,.08), 0 8px 26px rgba(27,34,48,.10); background: #fff; }
+.sheet-frame > .page { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+
+/* ---------- lookahead ---------- */
+table.la { border-collapse: separate; border-spacing: 0; font-size: 13.5px; width: 100%; }
+table.la th, table.la td { border-right: 1px solid var(--rule-2); border-bottom: 1px solid var(--rule-2); text-align: center; padding: 5px 4px; }
+table.la thead th { position: sticky; top: 0; background: #F7F8F9; font: 600 14px/1.15 var(--f-cond); z-index: 2; }
+table.la thead th .dn { display: block; font: 500 12px var(--f-body); color: var(--ink-2); }
+table.la th.task { text-align: left; position: sticky; left: 0; background: #F7F8F9; z-index: 1; width: 230px; min-width: 170px; font: 600 14.5px/1.15 var(--f-cond); padding: 6px 10px; }
+table.la thead th.task { z-index: 3; }
+table.la td .tag { font-size: 15px; margin: 1px; }
+table.la .wk { border-left: 2px solid var(--ink-3); }
+table.la .hol { background-image: var(--hatch); }
+table.la .hol-name { font: 600 11px/1.1 var(--f-cond); color: var(--ink-2); }
+table.la .today { background-color: #F2F6FC; }
+table.la thead th.today { box-shadow: inset 0 -3px 0 var(--blue); }
+
+/* ---------- shifts ---------- */
+.form-card { padding: 16px; margin-bottom: 16px; }
+.form-card h2, .setup h2 { font: 700 20px/1.1 var(--f-cond); margin: 0 0 4px; }
+.form-grid { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-top: 12px; }
+.field { display: grid; gap: 4px; }
+.field > span { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+table.simple { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.simple th { text-align: left; font: 600 14px var(--f-cond); color: var(--ink-2); padding: 8px 10px; border-bottom: 1px solid var(--rule); background: #F7F8F9; }
+table.simple td { padding: 7px 10px; border-bottom: 1px solid var(--rule-2); vertical-align: middle; }
+table.simple td.bad { color: var(--red); }
+table.simple tr.inactive td { color: var(--ink-3); }
+
+/* ---------- setup ---------- */
+.setup { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.setup section { padding: 18px; }
+.setup .intro { color: var(--ink-2); margin: 0 0 14px; max-width: 80ch; }
+.grid-fields { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: flex-end; }
+.task-table-wrap { overflow-x: auto; }
+table.tasks { border-collapse: collapse; width: 100%; min-width: 860px; }
+table.tasks th { text-align: left; font: 600 13.5px/1.2 var(--f-cond); color: var(--ink-2); padding: 6px 6px; border-bottom: 1px solid var(--rule); vertical-align: bottom; }
+table.tasks td { padding: 5px 6px; border-bottom: 1px solid var(--rule-2); vertical-align: middle; }
+table.tasks td.num { color: var(--ink-3); width: 28px; text-align: right; font-weight: 600; }
+table.tasks input[type=text] { width: 100%; min-width: 180px; font-weight: 600; }
+table.tasks .sentence { display: flex; align-items: center; gap: 6px; white-space: nowrap; color: var(--ink-2); }
+table.tasks .order { display: flex; gap: 2px; }
+table.tasks select { max-width: 230px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chips label { border: 1px solid var(--rule); border-radius: 16px; padding: 4px 10px; background: #fff; cursor: pointer; }
+.chips label:has(input:checked) { background: var(--ink); color: #fff; border-color: var(--ink); }
+.chips input { position: absolute; opacity: 0; pointer-events: none; }
+.labels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px 14px; }
+.labels-grid label { display: flex; align-items: center; gap: 8px; }
+.labels-grid .tag { font-size: 16px; flex: none; }
+.labels-grid input { flex: 1; min-width: 0; }
+.hol-year { margin: 14px 0 4px; font: 700 16px var(--f-cond); color: var(--ink-2); cursor: pointer; }
+
+/* ---------- dialog ---------- */
+dialog { border: 0; border-radius: 10px; padding: 0; width: min(680px, calc(100vw - 24px)); box-shadow: 0 24px 60px rgba(27,34,48,.3); color: var(--ink); }
+dialog::backdrop { background: rgba(27,34,48,.45); }
+.dlg-body { padding: 20px 22px 8px; max-height: calc(100vh - 160px); overflow: auto; }
+.dlg-body h2 { font: 700 24px/1.1 var(--f-cond); margin: 0 0 12px; }
+.dlg-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 22px; border-top: 1px solid var(--rule); background: #F7F8F9; border-radius: 0 0 10px 10px; flex-wrap: wrap; }
+.opt { border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.opt > label.check { font-weight: 600; font-size: 16px; }
+.opt .sub { margin: 10px 0 0 26px; display: grid; gap: 10px; }
+.trade-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 12px; font-size: 14px; }
+.hint { font-size: 13px; color: var(--ink-2); margin: 6px 0 0; }
+
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 9px 16px; border-radius: 6px; z-index: 80; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+
+/* ================= printable page (screen preview + print) ================= */
+#print-root { display: none; }
+.page {
+  width: 11in; height: 8.5in; padding: .42in .5in .38in; background: #fff; color: #10151F;
+  display: flex; flex-direction: column; overflow: hidden; font-family: var(--f-body);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.page.portrait { width: 8.5in; height: 11in; }
+.pg-head { display: flex; justify-content: space-between; align-items: flex-end; gap: .3in; padding-bottom: .1in; border-bottom: 2.25pt solid #10151F; margin-bottom: .12in; }
+.pg-trade { font: 700 26pt/1 var(--f-cond); letter-spacing: .005em; }
+.pg-sched { font: 500 10pt/1.2 var(--f-body); color: #4A5565; margin-top: 3pt; }
+.pg-month { font: 600 24pt/1 var(--f-cond); text-align: right; white-space: nowrap; }
+.pg-month span { color: #6B7584; font-weight: 500; }
+.pg-foot { display: flex; justify-content: space-between; gap: .3in; margin-top: .08in; font: 400 8.5pt/1.3 var(--f-body); color: #4A5565; }
+.pg-foot .key { display: flex; align-items: center; gap: 10pt; }
+.pg-foot .tag { font-size: 10pt; }
+
+.cal-grid { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1pt solid #10151F; border-left: 1pt solid #10151F; min-height: 0; }
+.cal-dow { font: 600 10pt/1 var(--f-cond); padding: 4pt 5pt; background: #10151F; color: #fff; border-right: 1pt solid #10151F; }
+.cal-day { position: relative; border-right: 1pt solid #10151F; border-bottom: 1pt solid #10151F; padding: 3pt 5pt 4pt; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.cal-day.off { background: #ECEFF2; }
+.cal-day.out { background: #F6F7F8; }
+.cal-day.hol { background-image: var(--hatch); }
+.cal-day.today { box-shadow: inset 0 0 0 2.5pt var(--blue); }
+.cal-date { font: 600 11pt/1 var(--f-cond); }
+.cal-day.out .cal-date { visibility: hidden; }
+.cal-hol { font: 600 9pt/1.1 var(--f-cond); color: #343E4C; margin-top: 2pt; background: #fff; align-self: flex-start; padding: 1pt 3pt; border-radius: 2pt; }
+.cal-marks { flex: 1; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 3pt 4pt; font-size: 30pt; min-height: 0; }
+.cal-marks.m2 { font-size: 21pt; }
+.cal-marks.m3 { font-size: 15pt; }
+.cal-lbl { font: 500 8pt/1.15 var(--f-body); color: #343E4C; text-align: center; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.page.portrait .cal-marks { font-size: 26pt; }
+
+.page .fit { flex: 1; min-height: 0; }
+table.pm { width: 100%; border-collapse: collapse; font-size: 8.5pt; line-height: 1.15; table-layout: fixed; }
+table.pm th, table.pm td { border: .75pt solid #8A939E; padding: 1.6pt 2pt; text-align: center; white-space: nowrap; overflow: hidden; }
+table.pm thead th { font: 600 9.5pt/1.1 var(--f-cond); background: #10151F; color: #fff; white-space: normal; border-color: #10151F; }
+table.pm thead tr.se th { background: #E4E8EC; color: #10151F; font: 500 8pt var(--f-body); border-color: #8A939E; }
+table.pm td.b { font-weight: 700; text-align: left; }
+table.pm td.b .tag { font-size: 9pt; }
+table.pm td.b .l { font: 400 7.5pt var(--f-body); color: #4A5565; margin-left: 3pt; }
+table.pm td.x { color: #B3261E; font-weight: 700; }
+table.pm td.sh { font-weight: 700; }
+table.pm tbody tr:nth-child(even) td { background: #F4F6F8; }
+
+table.pl { width: 100%; height: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; }
+table.pl thead tr { height: 1px; }
+table.pl th, table.pl td { border: .75pt solid #8A939E; padding: 2pt 2pt; text-align: center; }
+table.pl thead th { font: 600 9.5pt/1.1 var(--f-cond); background: #10151F; color: #fff; border-color: #10151F; }
+table.pl thead th .dn { display: block; font: 400 8pt var(--f-body); color: #D7DCE2; }
+table.pl th.task { text-align: left; font: 600 10pt/1.1 var(--f-cond); background: #F4F6F8; padding: 2pt 4pt; }
+table.pl thead th.task { background: #10151F; }
+table.pl td .tag { font-size: 11.5pt; margin: .5pt; }
+table.pl .wk { border-left: 2pt solid #10151F; }
+table.pl td.hol { background-image: var(--hatch); }
+table.pl .hol-name { font: 600 7.5pt/1.1 var(--f-cond); color: #343E4C; }
+
+@media print {
+  html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+  #app, #popover, dialog, .toast { display: none !important; }
+  #print-root { display: block !important; }
+  #print-root .page { break-after: page; page-break-after: always; }
+  #print-root .page:last-child { break-after: auto; page-break-after: auto; }
+}
+
+@media (max-width: 860px) {
+  .cal-layout { grid-template-columns: 1fr; }
+  .trade-list { position: static; max-height: none; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  main { padding: 16px 12px 50px; }
+  .topbar { padding: 10px 12px; }
+  .tabs { padding: 0 8px; }
+  table.simple td.wd { display: none; }
+  .setup section { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="popover" role="dialog" aria-label="Date details"></div>
+<dialog id="print-dialog" aria-label="Print"></dialog>
+<div id="print-root"></div>
+<input type="file" id="file-input" accept=".json,application/json" hidden>
+<noscript>This tool needs JavaScript turned on.</noscript>
+<script>
+/* ===================== Block schedule engine =====================
+   Pure functions: no DOM. Dates are whole "day numbers" (UTC days since
+   1970-01-01) so time zones never shift a date.
+   Rules (same as the spreadsheet, made consistent):
+     end            = WORKDAY(start, duration)
+     trade ready    = WORKDAY(end of this task's previous block, next-block gap)
+     task ready     = WORKDAY(predecessor's end (or start), gap)
+     start          = the later of the two, then any shift is applied
+=================================================================== */
+
+const DAY_MS = 86400000;
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MON3 = MONTHS.map(m => m.slice(0, 3));
+const DOW = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DOW3 = DOW.map(d => d.slice(0, 3));
+
+function parseISO(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+  const [y, m, d] = s.split('-').map(Number);
+  return Math.round(Date.UTC(y, m - 1, d) / DAY_MS);
+}
+function toISO(dn) { return new Date(dn * DAY_MS).toISOString().slice(0, 10); }
+function dateParts(dn) { const d = new Date(dn * DAY_MS); return { y: d.getUTCFullYear(), m: d.getUTCMonth(), d: d.getUTCDate(), w: d.getUTCDay() }; }
+function dowOf(dn) { return new Date(dn * DAY_MS).getUTCDay(); }
+function dnFromYMD(y, m, d) { return Math.round(Date.UTC(y, m, d) / DAY_MS); }
+function todayDN() { const t = new Date(); return dnFromYMD(t.getFullYear(), t.getMonth(), t.getDate()); }
+
+function fmtShort(dn) { const p = dateParts(dn); return `${MON3[p.m]} ${p.d}`; }
+function fmtDay(dn) { const p = dateParts(dn); return `${DOW3[p.w]} ${MON3[p.m]} ${p.d}`; }
+function fmtLong(dn) { const p = dateParts(dn); return `${DOW3[p.w]} ${MON3[p.m]} ${p.d}, ${p.y}`; }
+function fmtRange(a, b) {
+  if (a === b) return fmtShort(a);
+  const pa = dateParts(a), pb = dateParts(b);
+  if (pa.m === pb.m && pa.y === pb.y) return `${MON3[pa.m]} ${pa.d}–${pb.d}`;
+  return `${fmtShort(a)} – ${fmtShort(b)}`;
+}
+
+function makeCalendar(state) {
+  const work = new Set((state.workdays || []).map(Number));
+  const holidays = new Map();
+  (state.holidays || []).forEach(h => {
+    const dn = parseISO(h.date);
+    if (dn != null) holidays.set(dn, (holidays.has(dn) ? holidays.get(dn) + ' / ' : '') + (h.name || 'Holiday'));
+  });
+  const isWork = dn => work.has(dowOf(dn)) && !holidays.has(dn);
+  // Excel WORKDAY(): n = 0 returns the date unchanged; otherwise counts working days forward/back.
+  const workday = (dn, n) => {
+    n = Math.trunc(Number(n) || 0);
+    if (!n || work.size === 0) return dn;
+    const step = n > 0 ? 1 : -1;
+    let left = Math.abs(n), guard = 0;
+    while (left > 0 && guard++ < 20000) { dn += step; if (isWork(dn)) left--; }
+    return dn;
+  };
+  const nextWorkOnOrAfter = dn => { let g = 0; while (!isWork(dn) && g++ < 400 && work.size) dn++; return dn; };
+  return { isWork, workday, holidays, nextWorkOnOrAfter, work };
+}
+
+/* Order tasks so every task comes after the task it depends on. Cycles are broken
+   (the offending link is ignored and reported). */
+function dependencyOrder(tasks) {
+  const byId = new Map(tasks.map(t => [t.id, t]));
+  const order = [], state = new Map(), broken = new Set();
+  const visit = t => {
+    if (state.get(t.id) === 2) return;
+    state.set(t.id, 1);
+    const p = t.after && byId.get(t.after);
+    if (p && p.id !== t.id) {
+      if (state.get(p.id) === 1) broken.add(t.id); // closes a loop: ignore this task's link
+      else visit(p);
+    }
+    state.set(t.id, 2);
+    order.push(t);
+  };
+  tasks.forEach(visit);
+  return { order, broken, byId };
+}
+
+function predecessorOf(task, byId, broken) {
+  if (!task.after || task.after === task.id || broken.has(task.id)) return null;
+  return byId.get(task.after) || null;
+}
+
+function computeSchedule(state) {
+  const cal = makeCalendar(state);
+  const tasks = state.tasks || [];
+  const N = Math.max(1, Math.min(200, Math.trunc(state.blockCount) || 1));
+  const { order, broken, byId } = dependencyOrder(tasks);
+  const start0 = parseISO(state.startDate) ?? todayDN();
+
+  const shiftMap = new Map();
+  (state.shifts || []).forEach(s => {
+    const k = s.taskId + '|' + s.block;
+    if (!shiftMap.has(k)) shiftMap.set(k, []);
+    shiftMap.get(k).push(s);
+  });
+
+  const res = {};
+  tasks.forEach(t => { res[t.id] = []; });
+  const conflicts = [];
+
+  for (let b = 1; b <= N; b++) {
+    for (const t of order) {
+      const r = { block: b, taskId: t.id, depReady: null, tradeReady: null, shifted: false, shiftDays: 0, pinned: null, issues: [] };
+      const p = predecessorOf(t, byId, broken);
+      const cands = [];
+      if (p) {
+        const pr = res[p.id][b - 1];
+        const ref = t.anchor === 'start' ? pr.start : pr.end;
+        r.depReady = cal.workday(ref, t.gap);
+        cands.push(r.depReady);
+      } else if (b === 1) {
+        r.depReady = start0;
+        cands.push(start0);
+      }
+      if (b > 1) {
+        const prev = res[t.id][b - 2];
+        r.tradeReady = cal.workday(prev.end, t.nextGap == null ? 1 : t.nextGap);
+        cands.push(r.tradeReady);
+      }
+      let s = Math.max(...cands);
+      r.planned = s;
+      const sh = shiftMap.get(t.id + '|' + b);
+      if (sh) {
+        const pin = sh.filter(x => x.mode === 'date' && parseISO(x.date) != null).pop();
+        const days = sh.filter(x => x.mode !== 'date').reduce((a, x) => a + (Math.trunc(Number(x.days)) || 0), 0);
+        if (pin) { s = parseISO(pin.date); r.pinned = s; }
+        if (days) { s = cal.workday(s, days); r.shiftDays = days; }
+        r.shifted = s !== r.planned || !!pin || !!days;
+      }
+      r.start = s;
+      r.end = cal.workday(s, t.duration);
+      if (p && r.depReady != null && s < r.depReady)
+        r.issues.push(`Starts before ${p.name || 'the previous task'} allows (${fmtDay(r.depReady)}).`);
+      if (r.tradeReady != null && s < r.tradeReady)
+        r.issues.push(`${t.name || 'This trade'} is still on block ${b - 1} until ${fmtDay(r.tradeReady)}.`);
+      if (!cal.isWork(s))
+        r.issues.push(`${fmtDay(s)} is not a working day.`);
+      if (r.issues.length) conflicts.push(r);
+      res[t.id][b - 1] = r;
+    }
+  }
+
+  let first = Infinity, last = -Infinity;
+  tasks.forEach(t => res[t.id].forEach(r => { first = Math.min(first, r.start); last = Math.max(last, r.end); }));
+  if (!tasks.length) { first = start0; last = start0; }
+  return { cal, res, conflicts, N, order, broken, byId, first, last };
+}
+
+/* Which blocks each task has on each day. mode 'start' = start day only, 'all' = every working day start..end */
+function dayMarks(sched, taskId, mode) {
+  const out = new Map();
+  const add = (dn, block, kind) => { if (!out.has(dn)) out.set(dn, []); out.get(dn).push({ block, kind }); };
+  (sched.res[taskId] || []).forEach(r => {
+    add(r.start, r.block, 'start');
+    if (mode === 'all') {
+      for (let d = r.start + 1; d <= r.end; d++) if (sched.cal.isWork(d)) add(d, r.block, 'cont');
+    }
+  });
+  out.forEach(list => list.sort((a, b) => a.block - b.block));
+  return out;
+}
+
+/* ---------- holidays (same set as the 2025 sheet: Alberta statutory + Christmas shutdown) ---------- */
+function easterDN(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+  return dnFromYMD(y, month - 1, day);
+}
+function nthWeekday(y, m, weekday, n) { // n-th weekday (0=Sun) of month m
+  let dn = dnFromYMD(y, m, 1);
+  while (dowOf(dn) !== weekday) dn++;
+  return dn + 7 * (n - 1);
+}
+function observed(dn) { const w = dowOf(dn); return w === 6 ? dn + 2 : w === 0 ? dn + 1 : dn; }
+function standardHolidays(y) {
+  const list = [
+    [observed(dnFromYMD(y, 0, 1)), "New Year's Day"],
+    [nthWeekday(y, 1, 1, 3), 'Family Day'],
+    [easterDN(y) - 2, 'Good Friday'],
+    [(() => { let dn = dnFromYMD(y, 4, 24); while (dowOf(dn) !== 1) dn--; return dn; })(), 'Victoria Day'],
+    [observed(dnFromYMD(y, 6, 1)), 'Canada Day'],
+    [nthWeekday(y, 7, 1, 1), 'Heritage Day'],
+    [nthWeekday(y, 8, 1, 1), 'Labour Day'],
+    [nthWeekday(y, 9, 1, 2), 'Thanksgiving'],
+    [dnFromYMD(y, 10, 11), 'Remembrance Day'],
+  ];
+  for (let d = 23; d <= 31; d++) {
+    const dn = dnFromYMD(y, 11, d), w = dowOf(dn);
+    if (w === 0 || w === 6) continue;
+    list.push([dn, d === 25 ? 'Christmas Day' : d === 26 ? 'Boxing Day' : 'Christmas shutdown']);
+  }
+  // Christmas or Boxing Day on a weekend: shutdown already covers the weekdays around it.
+  return list.filter(([dn]) => { const w = dowOf(dn); return w !== 0 && w !== 6; })
+             .map(([dn, name]) => ({ date: toISO(dn), name }));
+}
+
+/* ---------- defaults ---------- */
+function uid() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); }
+
+const DEFAULT_TASKS = [
+  // name, duration, after (index), anchor, gap
+  ['Prime', 1, null, 'end', 0],
+  ['Stage 1 Finishing', 1, 0, 'end', 1],
+  ['Cabinet Delivery', 1, 1, 'end', 0],
+  ['Cabinet Install', 1, 2, 'end', 0],
+  ['Granite Measure', 1, 3, 'end', 1],
+  ['Drywall Touch Up 1', 1, 4, 'end', -1],
+  ['Spray', 1, 5, 'end', 1],
+  ['Roll Walls', 1, 6, 'end', 1],
+  ['Clean for Flooring', 1, 7, 'end', 0],
+  ['Tile', 2, 8, 'end', 0],
+  ['LVP & Carpet', 2, 9, 'end', 1],
+  ['Glass & Mirror Measure', 2, 10, 'end', -2],
+  ['Lockout', 2, 11, 'end', 0],
+  ['Drywall Tag-out', 1, 12, 'start', 1],
+  ['Glass, Mirror & Shelving Install', 2, 12, 'end', 1],
+  ['Pre Occ', 2, 14, 'end', 6],
+  ['Home Orientation', 2, 15, 'end', 11],
+  ['Possession', 1, 16, 'end', 3],
+];
+
+function defaultTasks() {
+  const ids = DEFAULT_TASKS.map(() => uid());
+  return DEFAULT_TASKS.map(([name, duration, after, anchor, gap], i) => ({
+    id: ids[i], name, duration, after: after == null ? null : ids[after], anchor, gap, nextGap: 1,
+  }));
+}
+
+function newSchedule(name) {
+  const t = todayDN();
+  const y = dateParts(t).y;
+  const base = { workdays: [1, 2, 3, 4, 5], holidays: [...standardHolidays(y), ...standardHolidays(y + 1)] };
+  const cal = makeCalendar(base);
+  return {
+    schema: 1,
+    id: uid(),
+    name: name || 'Untitled schedule',
+    startDate: toISO(cal.nextWorkOnOrAfter(t + 1)),
+    blockCount: 20,
+    weekStart: 0,
+    workdays: [1, 2, 3, 4, 5],
+    markMode: 'start',
+    showBlockLabels: true,
+    tasks: defaultTasks(),
+    blockLabels: [],
+    holidays: base.holidays,
+    shifts: [],
+    updatedAt: Date.now(),
+  };
+}
+
+/* Repair anything missing or malformed in a loaded schedule. */
+function normalizeSchedule(s) {
+  const d = newSchedule();
+  const out = Object.assign({}, d, s || {});
+  out.schema = 1;
+  if (!out.id) out.id = uid();
+  out.name = String(out.name || 'Untitled schedule');
+  if (parseISO(out.startDate) == null) out.startDate = d.startDate;
+  out.blockCount = Math.max(1, Math.min(200, Math.trunc(Number(out.blockCount)) || d.blockCount));
+  out.weekStart = Number(out.weekStart) === 1 ? 1 : 0;
+  out.workdays = Array.isArray(out.workdays) ? [...new Set(out.workdays.map(Number).filter(x => x >= 0 && x <= 6))].sort() : d.workdays;
+  if (!out.workdays.length) out.workdays = [1, 2, 3, 4, 5];
+  out.markMode = out.markMode === 'all' ? 'all' : 'start';
+  out.showBlockLabels = out.showBlockLabels !== false;
+  out.tasks = Array.isArray(out.tasks) ? out.tasks.map(t => ({
+    id: String(t.id || uid()),
+    name: String(t.name ?? ''),
+    duration: Math.trunc(Number(t.duration)) || 0,
+    after: t.after ? String(t.after) : null,
+    anchor: t.anchor === 'start' ? 'start' : 'end',
+    gap: Math.trunc(Number(t.gap)) || 0,
+    nextGap: t.nextGap == null ? 1 : (Math.trunc(Number(t.nextGap)) || 0),
+  })) : d.tasks;
+  const ids = new Set(out.tasks.map(t => t.id));
+  out.tasks.forEach(t => { if (t.after && !ids.has(t.after)) t.after = null; });
+  out.blockLabels = Array.isArray(out.blockLabels) ? out.blockLabels.map(x => String(x ?? '')) : [];
+  out.holidays = Array.isArray(out.holidays) ? out.holidays.filter(h => parseISO(h.date) != null).map(h => ({ date: h.date, name: String(h.name || 'Holiday') })) : [];
+  out.shifts = Array.isArray(out.shifts) ? out.shifts.filter(x => ids.has(String(x.taskId))).map(x => ({
+    id: String(x.id || uid()), taskId: String(x.taskId), block: Math.max(1, Math.trunc(Number(x.block)) || 1),
+    mode: x.mode === 'date' ? 'date' : 'days', days: Math.trunc(Number(x.days)) || 0,
+    date: parseISO(x.date) != null ? x.date : '', note: String(x.note || ''),
+  })) : [];
+  return out;
+}
+
+</script>
+<script>
+(() => {
+'use strict';
+
+/* ======================= storage ======================= */
+const STORE_KEY = 'blockSchedule.library.v1';
+const UI_KEY = 'blockSchedule.ui.v1';
+let lib = { currentId: null, schedules: {} };
+let storageOK = true;
+let S = null;       // current schedule (plain data)
+let sched = null;   // computed dates
+let ui = { tab: 'schedule', calTask: null, calMonth: null, laStart: null, laWeeks: 2 };
+
+function readJSON(key) {
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; }
+  catch (e) { storageOK = false; return null; }
+}
+function writeJSON(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); return true; }
+  catch (e) { storageOK = false; return false; }
+}
+function saveLib() { writeJSON(STORE_KEY, lib); }
+function saveUI() { writeJSON(UI_KEY, ui); }
+
+function loadLib() {
+  const data = readJSON(STORE_KEY);
+  if (data && data.schedules && typeof data.schedules === 'object') {
+    for (const [id, s] of Object.entries(data.schedules)) {
+      try { const n = normalizeSchedule(s); lib.schedules[n.id] = n; } catch (e) { /* skip damaged entry */ }
+    }
+    lib.currentId = data.currentId;
+  }
+  const savedUI = readJSON(UI_KEY);
+  if (savedUI) ui = Object.assign(ui, savedUI);
+  let fresh = false;
+  if (!Object.keys(lib.schedules).length) {
+    const s = newSchedule('Untitled schedule');
+    lib.schedules[s.id] = s; lib.currentId = s.id; fresh = true;
+  }
+  if (!lib.schedules[lib.currentId]) lib.currentId = Object.keys(lib.schedules)[0];
+  S = lib.schedules[lib.currentId];
+  if (fresh) ui.tab = 'setup';
+  saveLib();
+}
+
+/* ======================= helpers ======================= */
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  let late = null;
+  if (props) for (const k in props) {
+    const v = props[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'style') { if (typeof v === 'string') el.style.cssText = v; else Object.assign(el.style, v); }
+    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+    else if (k === 'value' || k === 'checked') (late = late || {})[k] = v;
+    else if (k === 'selected' || k === 'disabled' || k === 'open' || k === 'indeterminate') el[k] = v;
+    else if (k === 'text') el.textContent = v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  append(el, kids);
+  if (late) for (const k in late) el[k] = late[k];
+  return el;
+}
+function append(el, kids) {
+  for (const c of kids.flat(Infinity)) {
+    if (c == null || c === false) continue;
+    el.appendChild(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+  return el;
+}
+const $ = sel => document.querySelector(sel);
+const int = (v, d = 0) => { const n = Math.trunc(Number(v)); return Number.isFinite(n) ? n : d; };
+const plural = (n, one, many) => `${n} ${n === 1 ? one : (many || one + 's')}`;
+const monthStart = dn => { const p = dateParts(dn); return dnFromYMD(p.y, p.m, 1); };
+const addMonths = (m1, k) => { const p = dateParts(m1); return dnFromYMD(p.y, p.m + k, 1); };
+const monthLabel = m1 => { const p = dateParts(m1); return `${MONTHS[p.m]} ${p.y}`; };
+const weekStartOf = dn => dn - ((dowOf(dn) - S.weekStart + 7) % 7);
+const taskById = id => S.tasks.find(t => t.id === id);
+function slug(s) { return (s || 'schedule').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'schedule'; }
+
+function toast(msg) {
+  const old = $('.toast'); if (old) old.remove();
+  const t = h('div', { class: 'toast', role: 'status' }, msg);
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+function tagEl(block, kind, extra) {
+  return h('span', { class: 'tag' + (kind === 'cont' ? ' cont' : '') + (extra ? ' ' + extra : ''), title: `Block ${block}` }, String(block));
+}
+
+function recompute() { sched = computeSchedule(S); }
+
+/* Commit a change to the current schedule: normalise, save, recompute, redraw. */
+function commit(mutate, { rerender = true } = {}) {
+  mutate(S);
+  const n = normalizeSchedule(S);
+  Object.keys(S).forEach(k => delete S[k]);
+  Object.assign(S, n);
+  S.updatedAt = Date.now();
+  lib.schedules[S.id] = S;
+  saveLib();
+  recompute();
+  // Redraw after the browser has finished moving focus (e.g. Tab out of a field), so focus lands on the next field.
+  if (rerender) setTimeout(render, 0);
+}
+
+/* ======================= library actions ======================= */
+function switchTo(id) {
+  if (!lib.schedules[id]) return;
+  lib.currentId = id; S = lib.schedules[id]; saveLib();
+  ui.calTask = null; ui.calMonth = null; ui.laStart = null; saveUI();
+  closePopover(); recompute(); render();
+}
+function actNew() {
+  const s = newSchedule('Untitled schedule');
+  lib.schedules[s.id] = s; ui.tab = 'setup'; switchTo(s.id); toast('New schedule created');
+}
+function actDuplicate() {
+  const s = normalizeSchedule(JSON.parse(JSON.stringify(S)));
+  s.id = uid(); s.name = S.name + ' (copy)';
+  lib.schedules[s.id] = s; switchTo(s.id); toast('Schedule duplicated');
+}
+function actDelete() {
+  if (!confirm(`Delete "${S.name}" from this browser? Save it to a file first if you might need it again.`)) return;
+  delete lib.schedules[S.id];
+  if (!Object.keys(lib.schedules).length) { const s = newSchedule('Untitled schedule'); lib.schedules[s.id] = s; }
+  switchTo(Object.keys(lib.schedules)[0]); toast('Schedule deleted');
+}
+function actSaveFile() {
+  const data = Object.assign({ app: 'block-schedule' }, S);
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = h('a', { href: URL.createObjectURL(blob), download: slug(S.name) + '.schedule.json' });
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toast('Saved ' + a.download);
+}
+function actOpenFile() { $('#file-input').click(); }
+function importFile(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    let data;
+    try { data = JSON.parse(r.result); } catch (e) { alert('That file is not a schedule file (it is not valid JSON).'); return; }
+    if (!data || !Array.isArray(data.tasks)) { alert('That file is not a schedule file (no task list found).'); return; }
+    const s = normalizeSchedule(data);
+    if (lib.schedules[s.id] && !confirm(`"${lib.schedules[s.id].name}" is already in this browser. Replace it with the version in the file?\n\nChoose Cancel to open the file as a separate copy.`)) s.id = uid();
+    lib.schedules[s.id] = s; switchTo(s.id); toast('Opened ' + s.name);
+  };
+  r.readAsText(file);
+}
+
+/* ======================= render shell ======================= */
+const TABS = [
+  ['schedule', 'Schedule'], ['calendars', 'Trade calendars'], ['lookahead', 'Lookahead'], ['shifts', 'Shifts'], ['setup', 'Setup'],
+];
+
+function render() {
+  const active = document.activeElement;
+  const focusKey = active && active.dataset ? active.dataset.key : null;
+  const appEl = $('#app');
+  appEl.replaceChildren(renderTopbar(), renderTabs(), h('main', { id: 'view' }, renderView()));
+  document.title = `${S.name} – Block Schedule`;
+  if (focusKey) {
+    const el = appEl.querySelector(`[data-key="${CSS.escape(focusKey)}"]`);
+    if (el) { el.focus(); if (el.select && el.type === 'text') { /* keep caret at end */ const v = el.value; el.value = ''; el.value = v; } }
+  }
+  fitSheets();
+}
+
+function renderTopbar() {
+  const names = Object.values(lib.schedules).sort((a, b) => a.name.localeCompare(b.name));
+  const menu = h('details', { class: 'menu' },
+    h('summary', { class: 'btn' }, 'File'),
+    h('div', { class: 'menu-list', onclick: e => { if (e.target.closest('button')) e.currentTarget.parentElement.open = false; } },
+      h('button', { onclick: actNew }, 'New schedule'),
+      h('button', { onclick: actDuplicate }, 'Duplicate this schedule'),
+      h('hr'),
+      h('button', { onclick: actSaveFile }, 'Save to file…'),
+      h('button', { onclick: actOpenFile }, 'Open a schedule file…'),
+      h('hr'),
+      h('button', { class: 'danger', onclick: actDelete }, 'Delete this schedule'),
+    ));
+  return h('header', { class: 'topbar' },
+    h('div', { class: 'brand' }, h('span', { class: 'tag' }, '#'), 'Block Schedule'),
+    h('label', { class: 'sched-pick' },
+      h('span', { class: 'sr-only' }, 'Open schedule'),
+      h('select', { onchange: e => switchTo(e.target.value), value: S.id },
+        names.map(s => h('option', { value: s.id }, s.name)))),
+    menu,
+    h('div', { class: 'spacer' }),
+    h('button', { class: 'btn primary', onclick: () => openPrintDialog() }, 'Print'),
+  );
+}
+
+function renderTabs() {
+  return h('nav', { class: 'tabs', role: 'tablist' },
+    TABS.map(([id, label]) => h('button', {
+      role: 'tab', 'aria-selected': String(ui.tab === id),
+      onclick: () => { ui.tab = id; saveUI(); closePopover(); render(); window.scrollTo(0, 0); },
+    }, label, id === 'shifts' && S.shifts.length ? h('span', { class: 'count', style: 'background:var(--blue)' }, S.shifts.length) : null,
+       id === 'schedule' && sched.conflicts.length ? h('span', { class: 'count' }, sched.conflicts.length) : null)));
+}
+
+function renderView() {
+  const banners = [];
+  if (!storageOK) banners.push(h('div', { class: 'banner warn' }, 'This browser is not keeping your changes. Use File → Save to file before you close this tab.'));
+  if (sched.broken.size) banners.push(h('div', { class: 'banner warn' }, 'Some tasks wait on each other in a loop, so that link is being ignored. Fix the "after" choices in Setup.'));
+  const view = { schedule: viewSchedule, calendars: viewCalendars, lookahead: viewLookahead, shifts: viewShifts, setup: viewSetup }[ui.tab] || viewSchedule;
+  return [banners, view()];
+}
+
+function noTasks() {
+  return h('div', { class: 'panel empty' }, h('h2', {}, 'No tasks yet'),
+    h('p', {}, 'Add the trades for this schedule in Setup.'),
+    h('button', { class: 'btn primary', onclick: () => { ui.tab = 'setup'; render(); } }, 'Go to Setup'));
+}
+
+/* ======================= Schedule (master) ======================= */
+function viewSchedule() {
+  if (!S.tasks.length) return noTasks();
+  const tdn = todayDN();
+  const head = h('div', { class: 'view-head' },
+    h('div', {},
+      h('h1', {}, S.name),
+      h('p', {}, `${plural(S.blockCount, 'block')}, ${plural(S.tasks.length, 'task')}. Block 1 starts ${fmtLong(parseISO(S.startDate))}; the last task ends ${fmtLong(sched.last)}. Click any date to see why it falls there or to shift it.`)),
+    h('div', { class: 'toolbar' }, h('button', { class: 'btn', onclick: () => openPrintDialog({ master: true, calendars: false }) }, 'Print master')));
+  const out = [head];
+  if (sched.conflicts.length) out.push(h('div', { class: 'banner warn' },
+    `${plural(sched.conflicts.length, 'date breaks', 'dates break')} the schedule rules because of a shift. ${sched.conflicts.length === 1 ? 'It is' : 'They are'} outlined in red.`));
+
+  const thead = h('thead', {}, h('tr', {},
+    h('th', { class: 'blk' }, 'Block'),
+    S.tasks.map(t => {
+      const p = t.after && taskById(t.after);
+      return h('th', { title: describeTask(t) }, t.name || 'Untitled', h('span', { class: 'meta' }, `${t.duration}d` + (p ? `, ${t.gap >= 0 ? '+' : ''}${t.gap} after ${t.anchor === 'start' ? 'start' : 'end'}` : '')));
+    })));
+  const rows = [];
+  for (let b = 1; b <= sched.N; b++) {
+    const lbl = S.blockLabels[b - 1];
+    rows.push(h('tr', {},
+      h('td', { class: 'blk' }, tagEl(b), lbl ? h('span', { class: 'lbl', title: lbl }, lbl) : null),
+      S.tasks.map(t => {
+        const r = sched.res[t.id][b - 1];
+        const cls = ['cell'];
+        if (r.issues.length) cls.push('bad');
+        if (r.shifted) cls.push('shifted');
+        if (r.start <= tdn && tdn <= r.end) cls.push('now');
+        const shiftTxt = r.pinned != null ? 'set' : r.shiftDays ? (r.shiftDays > 0 ? '+' : '') + r.shiftDays : '';
+        return h('td', { class: 'c' }, h('button', {
+          class: cls.join(' '), 'data-shift': shiftTxt || null,
+          'aria-label': `${t.name}, block ${b}: ${fmtLong(r.start)} to ${fmtLong(r.end)}`,
+          onclick: e => openCellPopover(t, b, e.currentTarget),
+        }, h('span', { class: 's' }, fmtDay(r.start)), r.end !== r.start ? h('span', { class: 'e' }, 'to ' + fmtShort(r.end)) : null));
+      })));
+  }
+  out.push(h('div', { class: 'table-wrap' }, h('table', { class: 'master' }, thead, h('tbody', {}, rows))));
+  out.push(h('div', { class: 'legend' },
+    h('span', {}, h('i', { class: 'l-now' }), 'Working today'),
+    h('span', {}, h('i', { class: 'l-shift' }), 'Shifted (number = workdays moved)'),
+    h('span', {}, h('i', { class: 'l-bad' }), 'Breaks a rule')));
+  return out;
+}
+
+function describeTask(t) {
+  const p = t.after && taskById(t.after);
+  const dur = `Takes ${plural(t.duration, 'workday')} (start to end).`;
+  const when = p ? ` Starts ${plural(t.gap, 'workday')} after ${p.name} ${t.anchor === 'start' ? 'starts' : 'ends'}.` : ' Starts on the schedule start date.';
+  return dur + when + ` Moves to the next block ${plural(t.nextGap, 'workday')} after finishing one.`;
+}
+
+/* ---------- popover: why this date + shift ---------- */
+let popAnchor = null;
+function closePopover() { const p = $('#popover'); if (p) { p.classList.remove('open'); p.replaceChildren(); } popAnchor = null; }
+
+function openCellPopover(t, b, anchor) {
+  if (popAnchor === anchor) { closePopover(); return; }
+  closePopover(); popAnchor = anchor;
+  const pop = $('#popover');
+  const r = sched.res[t.id][b - 1];
+  const p = t.after && sched.byId.get(t.after) && !sched.broken.has(t.id) ? sched.byId.get(t.after) : null;
+  const existing = S.shifts.find(s => s.taskId === t.id && s.block === b);
+  const why = [];
+  if (p) why.push([`${p.name} block ${b} ${t.anchor === 'start' ? 'starts' : 'ends'} ${fmtDay(t.anchor === 'start' ? sched.res[p.id][b - 1].start : sched.res[p.id][b - 1].end)}, then ${t.gap >= 0 ? '+' : ''}${t.gap} workdays`, r.depReady]);
+  else if (b === 1) why.push(['Schedule start date', r.depReady]);
+  if (b > 1) why.push([`${t.name} crew finishes block ${b - 1}, then +${t.nextGap}`, r.tradeReady]);
+  const winner = Math.max(...why.map(w => w[1]));
+
+  let mode = existing ? existing.mode : 'days';
+  const daysIn = h('input', { type: 'number', value: existing && existing.mode === 'days' ? existing.days : 0, 'aria-label': 'Workdays to move', style: 'width:76px' });
+  const dateIn = h('input', { type: 'date', value: existing && existing.mode === 'date' ? existing.date : toISO(r.start), 'aria-label': 'New start date' });
+  const noteIn = h('input', { type: 'text', value: existing ? existing.note : '', placeholder: 'Reason (optional)', style: 'width:100%' });
+  const radio = (val, label) => h('label', { class: 'check' }, h('input', { type: 'radio', name: 'pmode', value: val, checked: mode === val, onchange: () => { mode = val; } }), label);
+
+  pop.replaceChildren();
+  append(pop, [
+    h('div', { class: 'pop-title' }, t.name, tagEl(b)),
+    h('p', { class: 'pop-dates' }, r.start === r.end ? fmtLong(r.start) : `${fmtLong(r.start)} to ${fmtLong(r.end)}`),
+    h('ul', { class: 'why' },
+      why.map(([txt, dn]) => h('li', { class: dn === winner ? 'wins' : '' }, h('span', {}, txt), h('span', { class: 'd' }, fmtDay(dn)))),
+      r.shifted ? h('li', { class: 'wins' }, h('span', {}, r.pinned != null ? 'Shift: start set by hand' : `Shift: ${r.shiftDays > 0 ? '+' : ''}${r.shiftDays} workdays`), h('span', { class: 'd' }, fmtDay(r.start))) : null),
+    r.issues.length ? h('ul', { class: 'issues' }, r.issues.map(i => h('li', {}, i))) : null,
+    h('div', { class: 'shift-form' },
+      h('div', { class: 'row' }, radio('days', 'Move by'), daysIn, h('span', { class: 'muted' }, 'workdays (use − to pull earlier)')),
+      h('div', { class: 'row' }, radio('date', 'Set start to'), dateIn),
+      noteIn),
+    h('p', { class: 'hint' }, 'Later blocks of this trade and every task that follows it move with it.'),
+    h('div', { class: 'pop-actions' },
+      existing ? h('button', { class: 'btn danger', onclick: () => { commit(s => { s.shifts = s.shifts.filter(x => x !== existing && !(x.taskId === t.id && x.block === b)); }); closePopover(); toast('Shift removed'); } }, 'Remove shift') : null,
+      h('button', { class: 'btn', onclick: closePopover }, 'Cancel'),
+      h('button', { class: 'btn primary', onclick: () => {
+        const shift = { id: existing ? existing.id : uid(), taskId: t.id, block: b, mode, days: int(daysIn.value), date: dateIn.value, note: noteIn.value };
+        if (mode === 'date' && !parseISO(shift.date)) { alert('Pick a start date.'); return; }
+        commit(s => {
+          s.shifts = s.shifts.filter(x => !(x.taskId === t.id && x.block === b));
+          if (!(mode === 'days' && shift.days === 0)) s.shifts.push(shift);
+        });
+        closePopover(); toast('Shift saved');
+      } }, 'Save shift')),
+  ]);
+  pop.classList.add('open');
+  const a = anchor.getBoundingClientRect();
+  const pw = pop.offsetWidth, ph = pop.offsetHeight;
+  let left = a.left + window.scrollX;
+  if (left + pw > window.scrollX + document.documentElement.clientWidth - 12) left = window.scrollX + document.documentElement.clientWidth - pw - 12;
+  let top = a.bottom + window.scrollY + 6;
+  if (a.bottom + ph + 12 > window.innerHeight && a.top - ph - 6 > 0) top = a.top + window.scrollY - ph - 6;
+  pop.style.left = Math.max(12, left) + 'px';
+  pop.style.top = top + 'px';
+  daysIn.focus();
+}
+
+/* ======================= printable pages ======================= */
+function pageEl(orient, kids) { return h('div', { class: 'page' + (orient === 'portrait' ? ' portrait' : '') }, kids); }
+function printedOn() { return 'Printed ' + fmtLong(todayDN()); }
+
+function calendarPage(t, m1, orient, screen) {
+  const p = dateParts(m1);
+  const daysIn = dateParts(dnFromYMD(p.y, p.m + 1, 0)).d;
+  const lead = (dowOf(m1) - S.weekStart + 7) % 7;
+  const rows = Math.ceil((lead + daysIn) / 7);
+  const marks = dayMarks(sched, t.id, S.markMode);
+  const work = new Set(S.workdays);
+  const tdn = todayDN();
+  const cells = [];
+  for (let i = 0; i < 7; i++) cells.push(h('div', { class: 'cal-dow' }, DOW[(S.weekStart + i) % 7]));
+  for (let i = 0; i < rows * 7; i++) {
+    const dn = m1 - lead + i;
+    const inMonth = i >= lead && i < lead + daysIn;
+    const cls = ['cal-day'];
+    if (!inMonth) cls.push('out');
+    else {
+      if (!work.has(dowOf(dn))) cls.push('off');
+      if (sched.cal.holidays.has(dn)) cls.push('hol');
+      if (screen && dn === tdn) cls.push('today');
+    }
+    const list = inMonth ? (marks.get(dn) || []) : [];
+    const lbl = S.showBlockLabels && list.length === 1 ? (S.blockLabels[list[0].block - 1] || '') : '';
+    cells.push(h('div', { class: cls.join(' ') },
+      h('span', { class: 'cal-date' }, dateParts(dn).d),
+      inMonth && sched.cal.holidays.has(dn) ? h('span', { class: 'cal-hol' }, sched.cal.holidays.get(dn)) : null,
+      h('div', { class: 'cal-marks' + (list.length === 2 ? ' m2' : list.length > 2 ? ' m3' : '') }, list.map(m => tagEl(m.block, m.kind))),
+      lbl ? h('div', { class: 'cal-lbl' }, lbl) : null));
+  }
+  const key = S.markMode === 'all'
+    ? [h('span', {}, tagEl(1, 'start', 'flat'), ' block starts'), h('span', {}, tagEl(1, 'cont', 'flat'), ' still working that block')]
+    : [h('span', {}, tagEl(1, 'start', 'flat'), ' block this trade starts that day')];
+  return pageEl(orient, [
+    h('div', { class: 'pg-head' },
+      h('div', {}, h('div', { class: 'pg-trade' }, t.name || 'Untitled task'), h('div', { class: 'pg-sched' }, S.name)),
+      h('div', { class: 'pg-month' }, MONTHS[p.m] + ' ', h('span', {}, p.y))),
+    h('div', { class: 'cal-grid', style: `grid-template-rows: auto repeat(${rows}, minmax(0, 1fr))` }, cells),
+    h('div', { class: 'pg-foot' }, h('div', { class: 'key' }, key), h('div', {}, printedOn())),
+  ]);
+}
+
+function chunk(arr, max) {
+  if (!arr.length) return [[]];
+  const pages = Math.ceil(arr.length / max), per = Math.ceil(arr.length / pages);
+  const out = []; for (let i = 0; i < arr.length; i += per) out.push(arr.slice(i, i + per)); return out;
+}
+
+function masterPages(orient) {
+  const tasksPer = orient === 'portrait' ? 5 : 8;
+  const rowsPer = orient === 'portrait' ? 38 : 26;
+  const blocks = Array.from({ length: sched.N }, (_, i) => i + 1);
+  const pages = [];
+  const tChunks = chunk(S.tasks, tasksPer), bChunks = chunk(blocks, rowsPer);
+  let anyShift = false, anyBad = false;
+  tChunks.forEach((tasks, ti) => bChunks.forEach((bl, bi) => {
+    const table = h('table', { class: 'pm' },
+      h('colgroup', {}, h('col', { style: `width:${S.blockLabels.some(Boolean) ? 1.35 : .62}in` }), tasks.flatMap(() => [h('col'), h('col')])),
+      h('thead', {},
+        h('tr', {}, h('th', { rowspan: 2 }, 'Block'), tasks.map(t => h('th', { colspan: 2 }, t.name))),
+        h('tr', { class: 'se' }, tasks.flatMap(() => [h('th', {}, 'Start'), h('th', {}, 'End')]))),
+      h('tbody', {}, bl.map(b => h('tr', {},
+        h('td', { class: 'b' }, tagEl(b, 'start', 'flat'), S.blockLabels[b - 1] ? h('span', { class: 'l' }, S.blockLabels[b - 1]) : null),
+        tasks.flatMap(t => {
+          const r = sched.res[t.id][b - 1];
+          if (r.shifted) anyShift = true; if (r.issues.length) anyBad = true;
+          const cls = r.issues.length ? 'x' : r.shifted ? 'sh' : '';
+          const f = orient === 'portrait' ? fmtShort : fmtDay;
+          return [h('td', { class: cls }, f(r.start) + (r.shifted ? '*' : '') + (r.issues.length ? '!' : '')), h('td', {}, f(r.end))];
+        })))));
+    const total = tChunks.length * bChunks.length, n = ti * bChunks.length + bi + 1;
+    pages.push(pageEl(orient, [
+      h('div', { class: 'pg-head' },
+        h('div', {}, h('div', { class: 'pg-trade' }, 'Master schedule'), h('div', { class: 'pg-sched' }, S.name)),
+        h('div', { class: 'pg-month', style: 'font-size:13pt' }, total > 1 ? `Page ${n} of ${total}` : '')),
+      h('div', { class: 'fit' }, table),
+    ]));
+  }));
+  pages.forEach(pg => pg.appendChild(h('div', { class: 'pg-foot' },
+    h('div', {}, `Block 1 starts ${fmtLong(parseISO(S.startDate))}.` + (anyShift ? ' * shifted by hand.' : '') + (anyBad ? ' ! breaks a schedule rule.' : '')),
+    h('div', {}, printedOn()))));
+  return pages;
+}
+
+function lookaheadDays(start, weeks) {
+  const work = new Set(S.workdays);
+  const days = [];
+  for (let d = start; d < start + 7 * weeks; d++) if (work.has(dowOf(d))) days.push(d);
+  return days;
+}
+
+function lookaheadTable(days, tasks, forPrint) {
+  const tdn = todayDN();
+  const marksBy = new Map(tasks.map(t => [t.id, dayMarks(sched, t.id, 'all')]));
+  const isWeekEdge = (d, i) => i > 0 && weekStartOf(d) !== weekStartOf(days[i - 1]);
+  const dayCls = (d, i) => [isWeekEdge(d, i) ? 'wk' : '', sched.cal.holidays.has(d) ? 'hol' : '', !forPrint && d === tdn ? 'today' : ''].filter(Boolean).join(' ');
+  return h('table', { class: forPrint ? 'pl' : 'la' },
+    forPrint ? h('colgroup', {}, h('col', { style: 'width:1.75in' }), days.map(() => h('col'))) : null,
+    h('thead', {}, h('tr', {}, h('th', { class: 'task' }, 'Task'),
+      days.map((d, i) => { const p = dateParts(d); return h('th', { class: dayCls(d, i) }, DOW3[p.w], h('span', { class: 'dn' }, `${MON3[p.m]} ${p.d}`)); }))),
+    h('tbody', {}, tasks.map(t => h('tr', {},
+      h('th', { class: 'task' }, t.name),
+      days.map((d, i) => {
+        if (sched.cal.holidays.has(d)) return h('td', { class: dayCls(d, i) }, t === tasks[0] ? h('span', { class: 'hol-name' }, sched.cal.holidays.get(d)) : null);
+        const list = marksBy.get(t.id).get(d) || [];
+        return h('td', { class: dayCls(d, i) }, list.map(m => tagEl(m.block, m.kind, 'flat')));
+      })))));
+}
+
+function lookaheadPages(start, weeks, orient) {
+  const perPage = orient === 'portrait' ? 1 : 2;
+  const rowsPer = orient === 'portrait' ? 34 : 24;
+  const pages = [];
+  for (let w = 0; w < weeks; w += perPage) {
+    const s = start + 7 * w, n = Math.min(perPage, weeks - w);
+    const days = lookaheadDays(s, n);
+    chunk(S.tasks, rowsPer).forEach(tasks => {
+      pages.push(pageEl(orient, [
+        h('div', { class: 'pg-head' },
+          h('div', {}, h('div', { class: 'pg-trade' }, 'Lookahead'), h('div', { class: 'pg-sched' }, S.name)),
+          h('div', { class: 'pg-month', style: 'font-size:16pt' }, fmtRange(s, s + 7 * n - 1) + ', ' + dateParts(s).y)),
+        h('div', { class: 'fit' }, lookaheadTable(days, tasks, true)),
+        h('div', { class: 'pg-foot' },
+          h('div', { class: 'key' }, h('span', {}, tagEl(1, 'start', 'flat'), ' block starts'), h('span', {}, tagEl(1, 'cont', 'flat'), ' still working that block')),
+          h('div', {}, printedOn())),
+      ]));
+    });
+  }
+  return pages;
+}
+
+/* Scale on-screen page previews to the width available. */
+function fitSheets() {
+  document.querySelectorAll('.sheet-frame').forEach(frame => {
+    const page = frame.firstElementChild; if (!page) return;
+    const pw = page.offsetWidth, ph = page.offsetHeight;
+    const k = frame.clientWidth / pw;
+    page.style.transform = `scale(${k})`;
+    frame.style.height = Math.round(ph * k) + 'px';
+  });
+}
+
+/* ======================= Trade calendars ======================= */
+function viewCalendars() {
+  if (!S.tasks.length) return noTasks();
+  if (!taskById(ui.calTask)) ui.calTask = S.tasks[0].id;
+  const t = taskById(ui.calTask);
+  const rs = sched.res[t.id];
+  const firstM = monthStart(sched.first), lastM = monthStart(sched.last);
+  if (ui.calMonth == null) {
+    const tm = monthStart(todayDN());
+    ui.calMonth = tm >= monthStart(rs[0].start) && tm <= monthStart(rs[rs.length - 1].end) ? tm : monthStart(rs[0].start);
+  }
+  const months = [];
+  for (let m = Math.min(firstM, ui.calMonth); m <= Math.max(lastM, ui.calMonth); m = addMonths(m, 1)) months.push(m);
+  const go = m => { ui.calMonth = m; saveUI(); render(); };
+
+  const list = h('div', { class: 'panel trade-list', role: 'list' }, S.tasks.map(x => {
+    const r = sched.res[x.id];
+    return h('button', { 'aria-current': String(x.id === t.id), onclick: () => { ui.calTask = x.id; saveUI(); render(); } },
+      h('span', {}, x.name || 'Untitled'), h('span', { class: 'rng' }, fmtShort(r[0].start) + ' – ' + fmtShort(r[r.length - 1].start)));
+  }));
+  const nav = h('div', { class: 'toolbar' },
+    h('div', { class: 'month-nav' },
+      h('button', { class: 'btn icon', 'aria-label': 'Previous month', onclick: () => go(addMonths(ui.calMonth, -1)) }, '‹'),
+      h('select', { 'aria-label': 'Month', onchange: e => go(int(e.target.value)), value: String(ui.calMonth) }, months.map(m => h('option', { value: String(m) }, monthLabel(m)))),
+      h('button', { class: 'btn icon', 'aria-label': 'Next month', onclick: () => go(addMonths(ui.calMonth, 1)) }, '›')),
+    h('button', { class: 'btn quiet', onclick: () => go(monthStart(todayDN())) }, 'This month'),
+    h('button', { class: 'btn quiet', onclick: () => go(monthStart(rs[0].start)) }, 'First block'),
+    h('button', { class: 'btn', onclick: () => openPrintDialog({ calendars: true, taskIds: [t.id] }) }, 'Print this trade'));
+  return h('div', { class: 'cal-layout' }, list,
+    h('div', {},
+      h('div', { class: 'view-head' },
+        h('div', {}, h('h1', {}, t.name || 'Untitled task'), h('p', {}, `Blocks 1–${sched.N}: ${fmtLong(rs[0].start)} to ${fmtLong(rs[rs.length - 1].end)}. ${describeTask(t)}`)),
+        nav),
+      h('div', { class: 'sheet-frame' }, calendarPage(t, ui.calMonth, 'landscape', true))));
+}
+
+/* ======================= Lookahead ======================= */
+function viewLookahead() {
+  if (!S.tasks.length) return noTasks();
+  if (ui.laStart == null) ui.laStart = weekStartOf(todayDN());
+  ui.laStart = weekStartOf(ui.laStart);
+  const weeks = Math.min(4, Math.max(1, int(ui.laWeeks, 2)));
+  const go = dn => { ui.laStart = weekStartOf(dn); saveUI(); render(); };
+  const days = lookaheadDays(ui.laStart, weeks);
+  return [
+    h('div', { class: 'view-head' },
+      h('div', {}, h('h1', {}, 'Lookahead'), h('p', {}, 'Which block each trade is in, day by day. Use it for walk-throughs and weekly meetings.')),
+      h('div', { class: 'toolbar' },
+        h('button', { class: 'btn icon', 'aria-label': 'Previous week', onclick: () => go(ui.laStart - 7) }, '‹'),
+        h('label', { class: 'field', style: 'grid-auto-flow:column;align-items:center;gap:6px' }, h('span', {}, 'Week of'),
+          h('input', { type: 'date', value: toISO(ui.laStart), onchange: e => { const d = parseISO(e.target.value); if (d != null) go(d); } })),
+        h('button', { class: 'btn icon', 'aria-label': 'Next week', onclick: () => go(ui.laStart + 7) }, '›'),
+        h('button', { class: 'btn quiet', onclick: () => go(todayDN()) }, 'This week'),
+        h('button', { class: 'btn quiet', onclick: () => go(sched.first) }, 'First block'),
+        h('select', { 'aria-label': 'Weeks shown', value: String(weeks), onchange: e => { ui.laWeeks = int(e.target.value, 2); saveUI(); render(); } },
+          [1, 2, 3, 4].map(n => h('option', { value: String(n) }, plural(n, 'week')))),
+        h('button', { class: 'btn', onclick: () => openPrintDialog({ calendars: false, lookahead: true, laStart: ui.laStart, laWeeks: weeks }) }, 'Print lookahead'))),
+    days.length ? h('div', { class: 'table-wrap' }, lookaheadTable(days, S.tasks, false)) : h('div', { class: 'panel empty' }, 'No workdays in this range.'),
+    h('div', { class: 'legend' },
+      h('span', {}, tagEl(3, 'start', 'flat'), ' Block starts that day'),
+      h('span', {}, tagEl(3, 'cont', 'flat'), ' Still working that block'),
+      h('span', {}, h('i', { style: 'background-image:var(--hatch);border:1px solid var(--rule)' }), 'Holiday')),
+  ];
+}
+
+/* ======================= Shifts ======================= */
+function viewShifts() {
+  if (!S.tasks.length) return noTasks();
+  const st = { taskId: S.tasks[0].id, block: 1, mode: 'days', days: 1, date: '', note: '' };
+  const taskSel = h('select', { onchange: e => { st.taskId = e.target.value; } }, S.tasks.map(t => h('option', { value: t.id }, t.name)));
+  const blockSel = h('select', { onchange: e => { st.block = int(e.target.value, 1); } }, Array.from({ length: sched.N }, (_, i) => h('option', { value: String(i + 1) }, `Block ${i + 1}`)));
+  const modeSel = h('select', { onchange: e => { st.mode = e.target.value; daysF.style.display = st.mode === 'days' ? '' : 'none'; dateF.style.display = st.mode === 'date' ? '' : 'none'; } },
+    h('option', { value: 'days' }, 'Move by workdays'), h('option', { value: 'date' }, 'Set a start date'));
+  const daysIn = h('input', { type: 'number', value: 1 });
+  const dateIn = h('input', { type: 'date' });
+  const noteIn = h('input', { type: 'text', placeholder: 'e.g. QA/QC not available', style: 'width:240px' });
+  const daysF = h('label', { class: 'field' }, h('span', {}, 'Workdays (− to pull earlier)'), daysIn);
+  const dateF = h('label', { class: 'field', style: 'display:none' }, h('span', {}, 'New start date'), dateIn);
+  const add = () => {
+    const shift = { id: uid(), taskId: taskSel.value, block: int(blockSel.value, 1), mode: modeSel.value, days: int(daysIn.value), date: dateIn.value, note: noteIn.value };
+    if (shift.mode === 'date' && !parseISO(shift.date)) { alert('Pick a start date.'); return; }
+    if (shift.mode === 'days' && !shift.days) { alert('Enter a number of workdays other than 0.'); return; }
+    commit(s => { s.shifts = s.shifts.filter(x => !(x.taskId === shift.taskId && x.block === shift.block)); s.shifts.push(shift); });
+    toast('Shift added');
+  };
+  const sorted = [...S.shifts].sort((a, b) => a.block - b.block || S.tasks.findIndex(t => t.id === a.taskId) - S.tasks.findIndex(t => t.id === b.taskId));
+  return [
+    h('div', { class: 'view-head' }, h('div', {}, h('h1', {}, 'Shifts'),
+      h('p', {}, 'Move one trade for one block when it slips or gets pulled ahead. Later blocks of that trade and every task that follows it move with it. Shift the first task to move a whole block. To move the whole schedule, change the start date in Setup.'))),
+    h('section', { class: 'panel form-card' },
+      h('h2', {}, 'Add a shift'),
+      h('div', { class: 'form-grid' },
+        h('label', { class: 'field' }, h('span', {}, 'Task'), taskSel),
+        h('label', { class: 'field' }, h('span', {}, 'Block'), blockSel),
+        h('label', { class: 'field' }, h('span', {}, 'Change'), modeSel),
+        daysF, dateF,
+        h('label', { class: 'field' }, h('span', {}, 'Note'), noteIn),
+        h('button', { class: 'btn primary', onclick: add }, 'Add shift'))),
+    sorted.length ? h('section', { class: 'panel' }, h('table', { class: 'simple' },
+      h('thead', {}, h('tr', {}, ['Task', 'Block', 'Change', 'Starts now', 'Note', ''].map(x => h('th', {}, x)))),
+      h('tbody', {}, sorted.map(x => {
+        const t = taskById(x.taskId);
+        const r = x.block <= sched.N ? sched.res[t.id][x.block - 1] : null;
+        return h('tr', { class: r ? '' : 'inactive' },
+          h('td', {}, t.name), h('td', {}, tagEl(x.block, 'start', 'flat')),
+          h('td', {}, x.mode === 'date' ? `Start set to ${fmtLong(parseISO(x.date))}` : `${x.days > 0 ? 'Later' : 'Earlier'} by ${plural(Math.abs(x.days), 'workday')}`),
+          h('td', { class: r && r.issues.length ? 'bad' : '' }, r ? [fmtLong(r.start), r.issues.length ? h('div', { class: 'small' }, r.issues.join(' ')) : null] : `Not in schedule (only ${sched.N} blocks)`),
+          h('td', {}, x.note || h('span', { class: 'muted' }, '—')),
+          h('td', { style: 'text-align:right' }, h('button', { class: 'btn quiet danger', onclick: () => commit(s => { s.shifts = s.shifts.filter(y => y.id !== x.id); }) }, 'Remove')));
+      }))),
+      h('div', { style: 'padding:12px; text-align:right' }, h('button', { class: 'btn danger', onclick: () => { if (confirm('Remove all shifts? Dates go back to the plan.')) commit(s => { s.shifts = []; }); } }, 'Remove all shifts')))
+      : h('div', { class: 'panel empty' }, h('h2', {}, 'No shifts'), h('p', {}, 'Every date follows the plan in Setup. Add a shift above, or click a date on the Schedule tab.')),
+  ];
+}
+
+/* ======================= Setup ======================= */
+function descendants(id) {
+  const out = new Set([id]);
+  let grew = true;
+  while (grew) { grew = false; S.tasks.forEach(t => { if (t.after && out.has(t.after) && !out.has(t.id)) { out.add(t.id); grew = true; } }); }
+  return out;
+}
+
+function viewSetup() {
+  const sec = (title, intro, ...body) => h('section', { class: 'panel' }, h('h2', {}, title), intro ? h('p', { class: 'intro' }, intro) : null, body);
+
+  /* --- schedule basics --- */
+  const basics = sec('Schedule', null,
+    h('div', { class: 'grid-fields' },
+      h('label', { class: 'field' }, h('span', {}, 'Name (prints on every page)'),
+        h('input', { type: 'text', 'data-key': 'name', value: S.name, style: 'width:300px', onchange: e => commit(s => { s.name = e.target.value.trim() || 'Untitled schedule'; }) })),
+      h('label', { class: 'field' }, h('span', {}, 'Block 1 start date'),
+        h('input', { type: 'date', 'data-key': 'start', value: S.startDate, onchange: e => { if (parseISO(e.target.value) != null) commit(s => { s.startDate = e.target.value; }); } })),
+      h('label', { class: 'field' }, h('span', {}, 'Number of blocks'),
+        h('input', { type: 'number', min: 1, max: 200, 'data-key': 'blocks', value: S.blockCount, onchange: e => commit(s => { s.blockCount = Math.max(1, Math.min(200, int(e.target.value, 1))); }) }))),
+    !sched.cal.isWork(parseISO(S.startDate)) ? h('p', { class: 'hint', style: 'color:var(--red)' }, `${fmtLong(parseISO(S.startDate))} is not a working day.`) : null);
+
+  /* --- tasks --- */
+  const updTask = (id, fn) => commit(s => { const t = s.tasks.find(x => x.id === id); if (t) fn(t, s); });
+  const move = (i, d) => commit(s => { const j = i + d; if (j < 0 || j >= s.tasks.length) return; const [t] = s.tasks.splice(i, 1); s.tasks.splice(j, 0, t); });
+  const del = t => {
+    if (!confirm(`Delete "${t.name}"? Tasks that follow it will follow ${t.after ? '"' + (taskById(t.after) || {}).name + '"' : 'the schedule start'} instead.`)) return;
+    commit(s => {
+      s.tasks.forEach(x => { if (x.after === t.id) { x.after = t.after; if (!t.after) x.gap = 0; } });
+      s.tasks = s.tasks.filter(x => x.id !== t.id);
+      s.shifts = s.shifts.filter(x => x.taskId !== t.id);
+    });
+  };
+  const addTask = () => commit(s => {
+    const last = s.tasks[s.tasks.length - 1];
+    s.tasks.push({ id: uid(), name: 'New task', duration: 1, after: last ? last.id : null, anchor: 'end', gap: 0, nextGap: 1 });
+  });
+  const taskRows = S.tasks.map((t, i) => {
+    const blocked = descendants(t.id);
+    return h('tr', {},
+      h('td', { class: 'num' }, i + 1),
+      h('td', {}, h('input', { type: 'text', 'data-key': 'tn' + t.id, value: t.name, 'aria-label': 'Task name', onchange: e => updTask(t.id, x => { x.name = e.target.value.trim(); }) })),
+      h('td', {}, h('input', { type: 'number', min: 0, 'data-key': 'td' + t.id, value: t.duration, 'aria-label': 'Duration in workdays', onchange: e => updTask(t.id, x => { x.duration = Math.max(0, int(e.target.value)); }) })),
+      h('td', {}, h('div', { class: 'sentence' },
+        t.after ? [h('input', { type: 'number', 'data-key': 'tg' + t.id, value: t.gap, 'aria-label': 'Workdays after', onchange: e => updTask(t.id, x => { x.gap = int(e.target.value); }) }), 'after'] : null,
+        h('select', { 'data-key': 'ta' + t.id, 'aria-label': 'Follows task', value: t.after || '', onchange: e => updTask(t.id, x => { x.after = e.target.value || null; }) },
+          h('option', { value: '' }, 'Block start date'),
+          S.tasks.filter(o => !blocked.has(o.id)).map(o => h('option', { value: o.id }, o.name || 'Untitled'))),
+        t.after ? h('select', { 'data-key': 'tw' + t.id, 'aria-label': 'Starts or ends', value: t.anchor, onchange: e => updTask(t.id, x => { x.anchor = e.target.value; }) },
+          h('option', { value: 'end' }, 'ends'), h('option', { value: 'start' }, 'starts')) : null)),
+      h('td', {}, h('input', { type: 'number', min: 0, 'data-key': 'tx' + t.id, value: t.nextGap, 'aria-label': 'Workdays before next block', onchange: e => updTask(t.id, x => { x.nextGap = Math.max(0, int(e.target.value)); }) })),
+      h('td', {}, h('div', { class: 'order' },
+        h('button', { class: 'btn icon', title: 'Move up', 'aria-label': 'Move up', disabled: i === 0, onclick: () => move(i, -1) }, '↑'),
+        h('button', { class: 'btn icon', title: 'Move down', 'aria-label': 'Move down', disabled: i === S.tasks.length - 1, onclick: () => move(i, 1) }, '↓'),
+        h('button', { class: 'btn icon danger', title: 'Delete task', 'aria-label': 'Delete task', onclick: () => del(t) }, '✕'))));
+  });
+  const tasks = sec('Tasks',
+    'Each task runs through the blocks in order. A block starts on the later of two dates: when the task it follows is ready (the "starts" column), or when its own crew is free from the previous block (the "next block" column). Duration is workdays from start to end, so 1 ends the next workday and 0 ends the same day. "0 after … ends" starts the day it ends; use a negative number to overlap. List order sets the column and print order only.',
+    h('div', { class: 'task-table-wrap' }, h('table', { class: 'tasks' },
+      h('thead', {}, h('tr', {}, h('th', {}, ''), h('th', {}, 'Task'), h('th', {}, 'Duration (workdays)'), h('th', {}, 'Starts (workdays after another task)'), h('th', {}, 'Next block after (workdays)'), h('th', {}, ''))),
+      h('tbody', {}, taskRows))),
+    h('div', { class: 'toolbar', style: 'margin-top:12px' },
+      h('button', { class: 'btn', onclick: addTask }, 'Add task'),
+      h('button', { class: 'btn quiet', onclick: () => { if (confirm('Replace all tasks with the standard list? Shifts will be removed.')) commit(s => { s.tasks = defaultTasks(); s.shifts = []; }); } }, 'Reset to standard task list')));
+
+  /* --- calendar settings --- */
+  const wdChips = h('div', { class: 'chips' }, [1, 2, 3, 4, 5, 6, 0].map(d => h('label', {},
+    h('input', { type: 'checkbox', checked: S.workdays.includes(d), onchange: e => commit(s => {
+      const set = new Set(s.workdays); e.target.checked ? set.add(d) : set.delete(d);
+      if (!set.size) { alert('At least one day has to be a workday.'); return; }
+      s.workdays = [...set];
+    }) }), DOW3[d])));
+  const calSet = sec('Calendar', null,
+    h('div', { class: 'grid-fields' },
+      h('div', { class: 'field' }, h('span', {}, 'Workdays'), wdChips),
+      h('label', { class: 'field' }, h('span', {}, 'Weeks start on'),
+        h('select', { value: String(S.weekStart), onchange: e => commit(s => { s.weekStart = int(e.target.value); }) },
+          h('option', { value: '0' }, 'Sunday'), h('option', { value: '1' }, 'Monday'))),
+      h('label', { class: 'field' }, h('span', {}, 'Trade calendars show the block number'),
+        h('select', { value: S.markMode, onchange: e => commit(s => { s.markMode = e.target.value; }) },
+          h('option', { value: 'start' }, 'On the start day only'), h('option', { value: 'all' }, 'On every day the trade is in it'))),
+      h('label', { class: 'check', style: 'padding-bottom:7px' }, h('input', { type: 'checkbox', checked: S.showBlockLabels, onchange: e => commit(s => { s.showBlockLabels = e.target.checked; }) }), 'Print block labels on calendars')));
+
+  /* --- block labels --- */
+  const labels = sec('Block labels',
+    'Optional. Type what each block number covers and it will show next to the number on screen and on printed pages. Leave them blank to print numbers only.',
+    h('div', { class: 'labels-grid' }, Array.from({ length: S.blockCount }, (_, i) => h('label', {}, tagEl(i + 1),
+      h('input', { type: 'text', 'data-key': 'bl' + i, value: S.blockLabels[i] || '', 'aria-label': `Block ${i + 1} label`, onchange: e => commit(s => { s.blockLabels[i] = e.target.value; }) })))),
+    S.blockLabels.some(Boolean) ? h('div', { style: 'margin-top:12px' }, h('button', { class: 'btn quiet danger', onclick: () => { if (confirm('Clear every block label?')) commit(s => { s.blockLabels = []; }); } }, 'Clear all labels')) : null);
+
+  /* --- holidays --- */
+  const hols = [...S.holidays].map((x, i) => ({ ...x, i })).sort((a, b) => a.date.localeCompare(b.date));
+  const years = [...new Set(hols.map(x => x.date.slice(0, 4)))];
+  const thisY = dateParts(todayDN()).y;
+  const yearSel = h('select', { 'aria-label': 'Year' }, [thisY - 1, thisY, thisY + 1, thisY + 2, thisY + 3].map(y => h('option', { value: String(y), selected: y === thisY + 1 }, String(y))));
+  const holRow = x => h('tr', {},
+    h('td', { style: 'width:170px' }, h('input', { type: 'date', value: x.date, 'data-key': 'hd' + x.i + x.date, onchange: e => { if (parseISO(e.target.value) != null) commit(s => { s.holidays[x.i].date = e.target.value; }); } })),
+    h('td', { style: 'width:110px', class: 'muted wd' }, DOW[dowOf(parseISO(x.date))]),
+    h('td', {}, h('input', { type: 'text', value: x.name, 'data-key': 'hn' + x.i + x.date, style: 'width:100%', onchange: e => commit(s => { s.holidays[x.i].name = e.target.value || 'Holiday'; }) })),
+    h('td', { style: 'text-align:right;width:90px' }, h('button', { class: 'btn quiet danger', onclick: () => commit(s => { s.holidays.splice(x.i, 1); }) }, 'Remove')));
+  const holRows = years.map(y => {
+    const inYear = hols.filter(x => x.date.startsWith(y));
+    return h('details', { open: int(y) >= thisY, class: 'hol-group' },
+      h('summary', { class: 'hol-year' }, `${y} (${plural(inYear.length, 'day')})`),
+      h('div', { class: 'task-table-wrap' }, h('table', { class: 'simple' }, h('tbody', {}, inYear.map(holRow)))));
+  });
+  const addDayIn = h('input', { type: 'date' });
+  const addNameIn = h('input', { type: 'text', placeholder: 'Name, e.g. Site shutdown' });
+  const holidays = sec('Holidays and non-working days',
+    'No task starts or ends on these days. Add site shutdowns here too. "Fill in a year" adds the same days as the 2025 sheet (Alberta statutory holidays plus a Christmas shutdown on the weekdays Dec 23–31); check them against your company calendar.',
+    h('div', { class: 'form-grid', style: 'margin-top:0' },
+      h('label', { class: 'field' }, h('span', {}, 'Date'), addDayIn),
+      h('label', { class: 'field' }, h('span', {}, 'Name'), addNameIn),
+      h('button', { class: 'btn', onclick: () => {
+        if (parseISO(addDayIn.value) == null) { alert('Pick a date.'); return; }
+        commit(s => { s.holidays.push({ date: addDayIn.value, name: addNameIn.value || 'Non-working day' }); });
+      } }, 'Add day'),
+      h('span', { style: 'flex:1' }),
+      h('label', { class: 'field' }, h('span', {}, 'Fill in a year'), yearSel),
+      h('button', { class: 'btn', onclick: () => {
+        const y = int(yearSel.value); const have = new Set(S.holidays.map(x => x.date));
+        const add = standardHolidays(y).filter(x => !have.has(x.date));
+        commit(s => { s.holidays.push(...add); }); toast(add.length ? `Added ${plural(add.length, 'day')} for ${y}` : `${y} is already filled in`);
+      } }, 'Fill in')),
+    holRows.length ? holRows : h('p', { class: 'muted' }, 'No holidays yet. Weekends are already skipped.'));
+
+  return h('div', { class: 'setup' }, basics, tasks, calSet, labels, holidays);
+}
+
+/* ======================= Print dialog ======================= */
+function openPrintDialog(preset = {}) {
+  closePopover();
+  if (!S.tasks.length) { alert('Add tasks in Setup before printing.'); return; }
+  const dlg = $('#print-dialog');
+  const firstM = monthStart(sched.first), lastM = monthStart(sched.last);
+  const months = []; for (let m = firstM; m <= lastM; m = addMonths(m, 1)) months.push(m);
+  const o = Object.assign({
+    calendars: true, master: false, lookahead: false,
+    taskIds: S.tasks.map(t => t.id), from: firstM, to: lastM, skipEmpty: true,
+    laStart: weekStartOf(Math.max(todayDN(), sched.first) > sched.last ? sched.first : Math.max(todayDN(), sched.first)), laWeeks: 2,
+    orient: ui.printOrient || 'landscape',
+  }, preset);
+  const sel = new Set(o.taskIds);
+  const count = h('strong');
+  const update = () => { count.textContent = plural(buildPages(o).length, 'page'); };
+
+  const chk = (key, label) => h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: o[key], onchange: e => { o[key] = e.target.checked; update(); } }), label);
+  const tradeBoxes = h('div', { class: 'trade-checks' }, S.tasks.map(t => h('label', { class: 'check' },
+    h('input', { type: 'checkbox', checked: sel.has(t.id), onchange: e => { e.target.checked ? sel.add(t.id) : sel.delete(t.id); o.taskIds = S.tasks.filter(x => sel.has(x.id)).map(x => x.id); update(); } }), t.name)));
+  const setAll = on => { tradeBoxes.querySelectorAll('input').forEach(i => { i.checked = on; }); S.tasks.forEach(t => on ? sel.add(t.id) : sel.delete(t.id)); o.taskIds = on ? S.tasks.map(t => t.id) : []; update(); };
+  const monthSel = key => h('select', { value: String(o[key]), onchange: e => { o[key] = int(e.target.value); update(); } }, months.map(m => h('option', { value: String(m) }, monthLabel(m))));
+
+  dlg.replaceChildren(h('form', { method: 'dialog', onsubmit: e => e.preventDefault() },
+    h('div', { class: 'dlg-body' },
+      h('h2', {}, 'Print or save as PDF'),
+      h('div', { class: 'opt' }, chk('calendars', 'Trade calendars, one month per page'),
+        h('div', { class: 'sub' },
+          h('div', { class: 'toolbar' }, h('span', { class: 'muted small' }, 'Trades:'),
+            h('button', { type: 'button', class: 'btn quiet', onclick: () => setAll(true) }, 'All'),
+            h('button', { type: 'button', class: 'btn quiet', onclick: () => setAll(false) }, 'None')),
+          tradeBoxes,
+          h('div', { class: 'toolbar' }, h('span', { class: 'muted small' }, 'From'), monthSel('from'), h('span', { class: 'muted small' }, 'to'), monthSel('to')),
+          chk('skipEmpty', 'Skip months where a trade has no blocks'))),
+      h('div', { class: 'opt' }, chk('master', 'Master schedule (every block and date)')),
+      h('div', { class: 'opt' }, chk('lookahead', 'Lookahead (trades by day)'),
+        h('div', { class: 'sub' }, h('div', { class: 'toolbar' },
+          h('span', { class: 'muted small' }, 'Week of'),
+          h('input', { type: 'date', value: toISO(o.laStart), onchange: e => { const d = parseISO(e.target.value); if (d != null) { o.laStart = weekStartOf(d); update(); } } }),
+          h('select', { value: String(o.laWeeks), onchange: e => { o.laWeeks = int(e.target.value, 2); update(); } }, [1, 2, 3, 4, 6, 8].map(n => h('option', { value: String(n) }, plural(n, 'week'))))))),
+      h('div', { class: 'toolbar' }, h('span', { class: 'muted small' }, 'Letter paper, 8.5 × 11 in:'),
+        h('select', { value: o.orient, onchange: e => { o.orient = e.target.value; ui.printOrient = o.orient; saveUI(); update(); } },
+          h('option', { value: 'landscape' }, 'Landscape'), h('option', { value: 'portrait' }, 'Portrait'))),
+      h('p', { class: 'hint' }, 'In Chrome\'s print window, set Destination to "Save as PDF" to make a PDF, or pick your printer. Leave Margins on Default.')),
+    h('div', { class: 'dlg-foot' },
+      h('span', {}, 'This prints ', count, '.'),
+      h('div', { class: 'toolbar' },
+        h('button', { type: 'button', class: 'btn', onclick: () => dlg.close() }, 'Cancel'),
+        h('button', { type: 'button', class: 'btn primary', onclick: () => { const pages = buildPages(o); if (!pages.length) { alert('Nothing selected to print.'); return; } dlg.close(); doPrint(pages, o.orient); } }, 'Print…')))));
+  update();
+  dlg.showModal();
+}
+
+function buildPages(o) {
+  const pages = [];
+  if (o.calendars) {
+    const from = Math.min(o.from, o.to), to = Math.max(o.from, o.to);
+    S.tasks.filter(t => o.taskIds.includes(t.id)).forEach(t => {
+      const marks = dayMarks(sched, t.id, S.markMode);
+      for (let m = from; m <= to; m = addMonths(m, 1)) {
+        if (o.skipEmpty) { const next = addMonths(m, 1); let any = false; for (const d of marks.keys()) if (d >= m && d < next) { any = true; break; } if (!any) continue; }
+        pages.push(() => calendarPage(t, m, o.orient, false));
+      }
+    });
+  }
+  if (o.master) pages.push(...masterPages(o.orient).map(p => () => p));
+  if (o.lookahead) pages.push(...lookaheadPages(o.laStart, o.laWeeks, o.orient).map(p => () => p));
+  return pages;
+}
+
+/* If a table is taller than the space on its page, shrink it to fit (never spill onto a second sheet). */
+function fitPrintTables(root) {
+  root.style.cssText = 'display:block; position:absolute; left:-30000px; top:0;';
+  root.querySelectorAll('.page .fit').forEach(box => {
+    const tbl = box.firstElementChild; if (!tbl) return;
+    tbl.style.zoom = ''; tbl.style.height = '';
+    const avail = box.clientHeight, need = tbl.scrollHeight;
+    if (need > avail + 1) { tbl.style.height = 'auto'; tbl.style.zoom = String(Math.floor((avail / tbl.scrollHeight) * 98) / 100); }
+  });
+  root.style.cssText = '';
+}
+
+let printing = false;
+async function doPrint(pageFns, orient) {
+  const root = $('#print-root');
+  root.replaceChildren(...pageFns.map(f => f()));
+  try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (e) { /* ignore */ }
+  fitPrintTables(root);
+  $('#page-size').textContent = `@page { size: letter ${orient}; margin: 0; }`;
+  const oldTitle = document.title;
+  document.title = `${S.name} – schedule`;
+  printing = true;
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => { document.title = oldTitle; }, 500);
+  }, 60);
+}
+window.addEventListener('afterprint', () => { if (printing) { printing = false; $('#print-root').replaceChildren(); } });
+window.addEventListener('beforeprint', () => {
+  // Printing from the browser menu instead of the Print button: print what is on screen.
+  const root = $('#print-root');
+  if (root.childElementCount) return;
+  printing = true;
+  $('#page-size').textContent = '@page { size: letter landscape; margin: 0; }';
+  let pages;
+  if (ui.tab === 'calendars' && taskById(ui.calTask)) pages = [calendarPage(taskById(ui.calTask), ui.calMonth, 'landscape', false)];
+  else if (ui.tab === 'lookahead') pages = lookaheadPages(weekStartOf(ui.laStart || todayDN()), Math.min(4, int(ui.laWeeks, 2)), 'landscape');
+  else pages = S.tasks.length ? masterPages('landscape') : [];
+  root.replaceChildren(...pages);
+  fitPrintTables(root);
+});
+
+/* ======================= boot ======================= */
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') { e.preventDefault(); openPrintDialog(); }
+  if (e.key === 'Escape') closePopover();
+});
+document.addEventListener('click', e => {
+  const pop = $('#popover');
+  if (pop.classList.contains('open') && !pop.contains(e.target) && !(popAnchor && popAnchor.contains(e.target))) closePopover();
+});
+$('#file-input').addEventListener('change', e => { const f = e.target.files[0]; if (f) importFile(f); e.target.value = ''; });
+window.addEventListener('resize', () => { fitSheets(); });
+window.addEventListener('storage', e => {
+  // Another tab changed the saved schedules: reload so both tabs agree.
+  if (e.key === STORE_KEY && e.newValue) {
+    try {
+      const data = JSON.parse(e.newValue);
+      lib.schedules = {}; Object.values(data.schedules || {}).forEach(s => { const n = normalizeSchedule(s); lib.schedules[n.id] = n; });
+      S = lib.schedules[S.id] || Object.values(lib.schedules)[0]; lib.currentId = S.id;
+      recompute(); render();
+    } catch (err) { /* ignore */ }
+  }
+});
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSheets);
+
+loadLib();
+recompute();
+render();
+window.__blockSchedule = { get state() { return S; }, get sched() { return sched; }, commit, switchTo, buildPages, masterPages, calendarPage, lookaheadPages, fitPrintTables };
+})();
+
+</script>
+</body>
+</html>
